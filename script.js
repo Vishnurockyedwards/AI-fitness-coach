@@ -518,6 +518,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (fillFromPicker) {
         fillFromPicker.addEventListener('click', applyPickerSelection);
     }
+
+    // Initialize hydration tracker
+    initHydrationTracker();
     if (connectWearableBtn) connectWearableBtn.addEventListener('click', connectWearable);
     if (disconnectWearableBtn) disconnectWearableBtn.addEventListener('click', disconnectWearable);
 
@@ -1915,3 +1918,128 @@ const chatbotResponses = {
         "I don't have information on that yet. Is there something else I can help with?"
     ]
 };
+
+// Hydration Tracker Functions
+function initHydrationTracker() {
+    loadHydrationData();
+    startHydrationReminders();
+}
+
+function loadHydrationData() {
+    const today = new Date().toLocaleDateString();
+    const hydrationData = JSON.parse(localStorage.getItem('hydrationData') || '{}');
+    const todayWater = hydrationData[today] || 0;
+
+    updateHydrationDisplay(todayWater);
+}
+
+function updateHydrationDisplay(currentWater) {
+    const goal = 3000; // 3 liters in ml
+    const percentage = Math.min((currentWater / goal) * 100, 100);
+
+    const currentWaterEl = document.getElementById('currentWater');
+    const waterPercentageEl = document.getElementById('waterPercentage');
+    const waterLevelEl = document.getElementById('waterLevel');
+
+    if (currentWaterEl) currentWaterEl.textContent = currentWater;
+    if (waterPercentageEl) waterPercentageEl.textContent = Math.round(percentage) + '%';
+
+    // Update water level visual
+    if (waterLevelEl) {
+        waterLevelEl.style.height = percentage + '%';
+    }
+
+    // Show congratulations if goal reached
+    if (currentWater >= goal) {
+        showHydrationMessage('🎉 Congratulations! You\'ve reached your daily hydration goal!');
+    }
+}
+
+function addWater(amount) {
+    const today = new Date().toLocaleDateString();
+    const hydrationData = JSON.parse(localStorage.getItem('hydrationData') || '{}');
+    const currentWater = (hydrationData[today] || 0) + amount;
+
+    hydrationData[today] = currentWater;
+    localStorage.setItem('hydrationData', JSON.stringify(hydrationData));
+
+    updateHydrationDisplay(currentWater);
+
+    // Show feedback
+    showHydrationMessage(`💧 Added ${amount}ml of water! Keep it up!`);
+
+    // Update last water time
+    localStorage.setItem('lastWaterTime', Date.now().toString());
+}
+
+function resetWater() {
+    if (confirm('Are you sure you want to reset today\'s water intake?')) {
+        const today = new Date().toLocaleDateString();
+        const hydrationData = JSON.parse(localStorage.getItem('hydrationData') || '{}');
+        hydrationData[today] = 0;
+        localStorage.setItem('hydrationData', JSON.stringify(hydrationData));
+
+        updateHydrationDisplay(0);
+        showHydrationMessage('💧 Water intake reset for today.');
+    }
+}
+
+function showHydrationMessage(message) {
+    const reminder = document.getElementById('hydrationReminder');
+    if (reminder) {
+        reminder.innerHTML = '<strong>' + message + '</strong>';
+        reminder.classList.add('show');
+
+        setTimeout(() => {
+            reminder.classList.remove('show');
+        }, 3000);
+    }
+}
+
+function startHydrationReminders() {
+    // Check if reminders are enabled
+    const remindersEnabled = localStorage.getItem('hydrationReminders') !== 'false';
+    if (!remindersEnabled) return;
+
+    // Set up reminder every 2 hours (7200000 ms)
+    setInterval(() => {
+        const now = new Date();
+        const hours = now.getHours();
+
+        // Only show reminders during waking hours (7 AM to 10 PM)
+        if (hours >= 7 && hours <= 22) {
+            showHydrationReminder();
+        }
+    }, 7200000); // 2 hours
+
+    // Also check immediately if it's been 2+ hours since last water intake
+    checkLastWaterIntake();
+}
+
+function checkLastWaterIntake() {
+    const lastWaterTime = localStorage.getItem('lastWaterTime');
+    if (lastWaterTime) {
+        const timeSinceLastWater = Date.now() - parseInt(lastWaterTime);
+        const twoHours = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+
+        if (timeSinceLastWater >= twoHours) {
+            showHydrationReminder();
+        }
+    }
+}
+
+function showHydrationReminder() {
+    // Show visual reminder
+    showHydrationMessage('💧 Time to drink water! Stay hydrated for better performance.');
+
+    // Show browser notification if permission granted
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('💧 Hydration Reminder', {
+            body: 'Time to drink some water! Stay hydrated for better performance.',
+            icon: 'ai.png'
+        });
+    }
+
+    // Add notification to the notification system
+    addNotification('💧 Time to drink water! Stay hydrated for better performance.', 'info');
+}

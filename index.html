@@ -354,7 +354,51 @@
                             <span class="help-text">Bluetooth works on https or localhost only. Grant permission when prompted.</span>
                         </div>
                     </div>
-                    
+
+                    <!-- Hydration Tracker -->
+                    <div class="hydration-tracker-section">
+                        <h3>💧 Hydration Tracker</h3>
+                        <div class="hydration-content">
+                            <div class="hydration-reminder" id="hydrationReminder">
+                                <strong>💧 Time to drink water!</strong> Stay hydrated for better performance.
+                            </div>
+
+                            <div class="hydration-main">
+                                <div class="water-bottle-container">
+                                    <div class="water-bottle">
+                                        <div class="water-level" id="waterLevel"></div>
+                                    </div>
+                                </div>
+
+                                <div class="hydration-stats">
+                                    <div class="hydration-stat">
+                                        <h4 id="currentWater">0</h4>
+                                        <p>Current (ml)</p>
+                                    </div>
+                                    <div class="hydration-stat">
+                                        <h4 id="waterGoal">3000</h4>
+                                        <p>Goal (ml)</p>
+                                    </div>
+                                    <div class="hydration-stat">
+                                        <h4 id="waterPercentage">0%</h4>
+                                        <p>Progress</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="hydration-controls">
+                                <button class="water-btn" onclick="addWater(250)">+250ml</button>
+                                <button class="water-btn" onclick="addWater(500)">+500ml</button>
+                                <button class="water-btn" onclick="addWater(750)">+750ml</button>
+                                <button class="water-btn reset" onclick="resetWater()">Reset</button>
+                            </div>
+
+                            <p class="hydration-tip">
+                                💡 Tip: Drink water regularly throughout the day. You'll get reminders every 2 hours!
+                            </p>
+                        </div>
+                    </div>
+
                     <div class="add-food-section">
                         <h3>Add Food</h3>
                         <form id="foodForm">
