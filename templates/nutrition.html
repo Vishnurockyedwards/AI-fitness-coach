@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitAI - Nutrition Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .food-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .food-details {
+            margin-top: 20px;
+        }
+        .food-history {
+            margin-top: 30px;
+        }
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Nutrition Tracker</h1>
+        
+        <!-- Food Search Form -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Search Food</h2>
+            </div>
+            <div class="card-body">
+                <form id="foodSearchForm" method="post" action="{{ url_for('search_food') }}">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <input type="text" id="searchTerm" name="search_term" class="form-control" placeholder="Enter food name (e.g., Apple, Chicken, etc.)">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Search Results -->
+        <div class="card mb-4" id="searchResultsCard" style="display: none;">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Search Results</h2>
+            </div>
+            <div class="card-body search-results">
+                <div id="searchResults"></div>
+            </div>
+        </div>
+        
+        <!-- Food Details (if any) -->
+        {% if food_details %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Food Details</h2>
+            </div>
+            <div class="card-body">
+                {% for food in food_details %}
+                <div class="food-item">
+                    <h3>{{ food.FoodItem }}</h3>
+                    <p><strong>Category:</strong> {{ food.FoodCategory }}</p>
+                    <p><strong>Serving Size:</strong> {{ food.per100grams }}</p>
+                    <p><strong>Calories:</strong> {{ food.Cals_per100grams }}</p>
+                    <p><strong>Kilojoules:</strong> {{ food.KJ_per100grams }}</p>
+                </div>
+                {% endfor %}
+                
+                <div class="mt-3">
+                    <h4>Total Calories: {{ calories }}</h4>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Food History -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Food History</h2>
+            </div>
+            <div class="card-body">
+                <div id="foodHistory">
+                    <!-- Food history will be displayed here -->
+                    <p class="text-muted" id="emptyHistoryMessage">No food items added yet.</p>
+                </div>
+                
+                <div class="mt-3">
+                    <h4>Daily Total: <span id="dailyTotal">0</span> calories</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Template for search results -->
+    <template id="foodItemTemplate">
+        <div class="food-item">
+            <h3 class="food-name"></h3>
+            <p><strong>Category:</strong> <span class="food-category"></span></p>
+            <p><strong>Serving Size:</strong> <span class="food-serving"></span></p>
+            <p><strong>Calories:</strong> <span class="food-calories"></span></p>
+            <p><strong>Kilojoules:</strong> <span class="food-kilojoules"></span></p>
+            <button class="btn btn-sm btn-success add-food-btn">Add to Daily Record</button>
+        </div>
+    </template>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load food history from localStorage
+            loadFoodHistory();
+            
+            // Handle food search form submission
+            const foodSearchForm = document.getElementById('foodSearchForm');
+            foodSearchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const searchTerm = document.getElementById('searchTerm').value.trim();
+                if (!searchTerm) return;
+                
+                // Show loading indicator
+                const searchResults = document.getElementById('searchResults');
+                searchResults.innerHTML = '<p>Searching...</p>';
+                document.getElementById('searchResultsCard').style.display = 'block';
+                
+                // Send AJAX request to search for food
+                const formData = new FormData(foodSearchForm);
+                fetch('/search_food', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displaySearchResults(data.results);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    searchResults.innerHTML = '<p class="text-danger">An error occurred while searching. Please try again.</p>';
+                });
+            });
+            
+            // Function to display search results
+            function displaySearchResults(results) {
+                const searchResults = document.getElementById('searchResults');
+                searchResults.innerHTML = '';
+                
+                if (results.length === 0) {
+                    searchResults.innerHTML = '<p>No results found. Try a different search term.</p>';
+                    return;
+                }
+                
+                const template = document.getElementById('foodItemTemplate');
+                
+                results.forEach(food => {
+                    const clone = template.content.cloneNode(true);
+                    
+                    clone.querySelector('.food-name').textContent = food.FoodItem;
+                    clone.querySelector('.food-category').textContent = food.FoodCategory;
+                    clone.querySelector('.food-serving').textContent = food.per100grams;
+                    clone.querySelector('.food-calories').textContent = food.Cals_per100grams;
+                    clone.querySelector('.food-kilojoules').textContent = food.KJ_per100grams;
+                    
+                    const addButton = clone.querySelector('.add-food-btn');
+                    addButton.addEventListener('click', function() {
+                        addFoodToHistory(food);
+                    });
+                    
+                    searchResults.appendChild(clone);
+                });
+            }
+            
+            // Function to add food to history
+            function addFoodToHistory(food) {
+                // Get existing food history from localStorage
+                let foodHistory = JSON.parse(localStorage.getItem('foodHistory') || '[]');
+                
+                // Add timestamp to the food item
+                const foodWithTimestamp = {
+                    ...food,
+                    timestamp: new Date().toISOString(),
+                    date: new Date().toLocaleDateString()
+                };
+                
+                // Add to history
+                foodHistory.push(foodWithTimestamp);
+                
+                // Save to localStorage
+                localStorage.setItem('foodHistory', JSON.stringify(foodHistory));
+                
+                // Update the display
+                displayFoodHistory(foodHistory);
+            }
+            
+            // Function to load food history
+            function loadFoodHistory() {
+                const foodHistory = JSON.parse(localStorage.getItem('foodHistory') || '[]');
+                displayFoodHistory(foodHistory);
+            }
+            
+            // Function to display food history
+            function displayFoodHistory(foodHistory) {
+                const foodHistoryElement = document.getElementById('foodHistory');
+                const emptyHistoryMessage = document.getElementById('emptyHistoryMessage');
+                
+                if (foodHistory.length === 0) {
+                    emptyHistoryMessage.style.display = 'block';
+                    foodHistoryElement.innerHTML = '';
+                    document.getElementById('dailyTotal').textContent = '0';
+                    return;
+                }
+                
+                emptyHistoryMessage.style.display = 'none';
+                foodHistoryElement.innerHTML = '';
+                
+                // Filter for today's items
+                const today = new Date().toLocaleDateString();
+                const todayItems = foodHistory.filter(item => item.date === today);
+                
+                // Calculate daily total
+                let dailyTotal = 0;
+                
+                // Group by date
+                const groupedByDate = {};
+                foodHistory.forEach(item => {
+                    if (!groupedByDate[item.date]) {
+                        groupedByDate[item.date] = [];
+                    }
+                    groupedByDate[item.date].push(item);
+                    
+                    // Add to daily total if it's today
+                    if (item.date === today) {
+                        // Extract calories value (remove ' cal' suffix)
+                        const caloriesStr = item.Cals_per100grams;
+                        const calories = parseFloat(caloriesStr.split(' ')[0]);
+                        dailyTotal += calories;
+                    }
+                });
+                
+                // Update daily total
+                document.getElementById('dailyTotal').textContent = dailyTotal.toFixed(0);
+                
+                // Display items grouped by date, most recent first
+                const dates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
+                
+                dates.forEach(date => {
+                    const dateHeader = document.createElement('h4');
+                    dateHeader.textContent = date;
+                    dateHeader.className = 'mt-3 mb-2';
+                    foodHistoryElement.appendChild(dateHeader);
+                    
+                    const items = groupedByDate[date];
+                    items.forEach(item => {
+                        const foodItem = document.createElement('div');
+                        foodItem.className = 'food-item';
+                        
+                        const time = new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        
+                        foodItem.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5>${item.FoodItem}</h5>
+                                <small class="text-muted">${time}</small>
+                            </div>
+                            <p><strong>Category:</strong> ${item.FoodCategory}</p>
+                            <p><strong>Calories:</strong> ${item.Cals_per100grams}</p>
+                        `;
+                        
+                        foodHistoryElement.appendChild(foodItem);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
