@@ -770,6 +770,214 @@ nav {
     margin-top: 20px;
 }
 
+/* Workout Heatmap Section */
+.workout-heatmap-section {
+    max-width: 1000px;
+    margin: 0 auto 40px;
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.workout-heatmap-section h2 {
+    color: var(--secondary);
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.heatmap-container {
+    width: 100%;
+}
+
+.heatmap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.heatmap-stats {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.heatmap-stat {
+    text-align: center;
+    min-width: 80px;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.heatmap-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.heatmap-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: bold;
+}
+
+.heatmap-btn:hover {
+    background: #e64a19;
+    transform: translateY(-2px);
+}
+
+.heatmap-btn.secondary {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.heatmap-btn.secondary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.heatmap-calendar {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    position: relative;
+}
+
+.heatmap-months {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: var(--gray);
+    font-weight: bold;
+}
+
+.heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(53, 1fr);
+    gap: 2px;
+    margin-bottom: 15px;
+}
+
+.heatmap-day {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.heatmap-day[data-level="0"] {
+    background-color: #ebedf0;
+}
+
+.heatmap-day[data-level="1"] {
+    background-color: #c6e48b;
+}
+
+.heatmap-day[data-level="2"] {
+    background-color: #7bc96f;
+}
+
+.heatmap-day[data-level="3"] {
+    background-color: #239a3b;
+}
+
+.heatmap-day[data-level="4"] {
+    background-color: #196127;
+}
+
+.heatmap-day:hover {
+    transform: scale(1.2);
+    z-index: 10;
+}
+
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.legend-colors {
+    display: flex;
+    gap: 2px;
+}
+
+.legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.legend-color[data-level="0"] {
+    background-color: #ebedf0;
+}
+
+.legend-color[data-level="1"] {
+    background-color: #c6e48b;
+}
+
+.legend-color[data-level="2"] {
+    background-color: #7bc96f;
+}
+
+.legend-color[data-level="3"] {
+    background-color: #239a3b;
+}
+
+.legend-color[data-level="4"] {
+    background-color: #196127;
+}
+
+.heatmap-tooltip {
+    position: absolute;
+    background: var(--dark);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.heatmap-tooltip.show {
+    opacity: 1;
+}
+
+
+
 /* Saved Workouts Section */
 .saved-workouts-section {
     max-width: 1000px;
@@ -1669,8 +1877,30 @@ nav {
 @media (max-width: 768px) {
     .reminders-section,
     .nutrition-tracker-section,
-    .saved-workouts-section {
+    .saved-workouts-section,
+    .workout-heatmap-section {
         padding: 30px 20px;
+    }
+
+    .heatmap-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .heatmap-stats {
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .heatmap-grid {
+        grid-template-columns: repeat(26, 1fr);
+        gap: 1px;
+    }
+
+    .heatmap-day {
+        width: 10px;
+        height: 10px;
     }
 
     .notification-panel {

@@ -92,6 +92,7 @@ let batteryLevelChar = null;
 let userData = {
     profile: {},
     workoutPlans: [],
+    workoutSessions: [], // New: track completed workouts
     meals: [],
     reminders: [],
     notifications: []
@@ -521,6 +522,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize hydration tracker
     initHydrationTracker();
+
+    // Add sample workout data if none exists (for demo purposes)
+    if (userData.workoutSessions.length === 0) {
+        addSampleWorkoutData();
+    }
+
+
     if (connectWearableBtn) connectWearableBtn.addEventListener('click', connectWearable);
     if (disconnectWearableBtn) disconnectWearableBtn.addEventListener('click', disconnectWearable);
 
@@ -771,6 +779,7 @@ function switchToSection(section) {
             workoutsSection.classList.remove('hidden');
             workoutsLink.classList.add('active');
             updateSavedWorkouts();
+            initWorkoutHeatmap();
             break;
         case 'nutrition':
             nutritionSection.classList.remove('hidden');
@@ -2043,3 +2052,231 @@ function showHydrationReminder() {
     // Add notification to the notification system
     addNotification('💧 Time to drink water! Stay hydrated for better performance.', 'info');
 }
+
+// Workout Heatmap Functions
+function initWorkoutHeatmap() {
+    console.log('Initializing workout heatmap...');
+    generateHeatmapCalendar();
+    updateHeatmapStats();
+}
+
+function generateHeatmapCalendar() {
+    const heatmapGrid = document.getElementById('heatmapGrid');
+    const heatmapMonths = document.getElementById('heatmapMonths');
+
+    if (!heatmapGrid || !heatmapMonths) return;
+
+    // Clear existing content
+    heatmapGrid.innerHTML = '';
+    heatmapMonths.innerHTML = '';
+
+    // Generate calendar for the last year
+    const today = new Date();
+    const oneYearAgo = new Date(today);
+    oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+    // Get workout data
+    const workoutData = getWorkoutDataByDate();
+
+    // Generate month labels
+    const months = [];
+    const currentDate = new Date(oneYearAgo);
+
+    while (currentDate <= today) {
+        const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        if (months.length === 0 || months[months.length - 1].getMonth() !== monthStart.getMonth()) {
+            months.push(monthStart);
+        }
+        currentDate.setDate(currentDate.getDate() + 7);
+    }
+
+    // Add month labels
+    months.forEach(month => {
+        const monthLabel = document.createElement('div');
+        monthLabel.textContent = month.toLocaleDateString('en-US', { month: 'short' });
+        heatmapMonths.appendChild(monthLabel);
+    });
+
+    // Generate day squares
+    const startDate = new Date(oneYearAgo);
+    const currentDay = new Date(startDate);
+
+    while (currentDay <= today) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'heatmap-day';
+
+        const dateString = currentDay.toLocaleDateString();
+        const workoutCount = workoutData[dateString] || 0;
+        const level = getWorkoutLevel(workoutCount);
+
+        dayElement.setAttribute('data-level', level);
+        dayElement.setAttribute('data-date', dateString);
+        dayElement.setAttribute('data-count', workoutCount);
+
+        // Add hover tooltip
+        dayElement.addEventListener('mouseenter', showHeatmapTooltip);
+        dayElement.addEventListener('mouseleave', hideHeatmapTooltip);
+
+        heatmapGrid.appendChild(dayElement);
+        currentDay.setDate(currentDay.getDate() + 1);
+    }
+}
+
+function getWorkoutDataByDate() {
+    const workoutData = {};
+
+    userData.workoutSessions.forEach(session => {
+        const date = new Date(session.date).toLocaleDateString();
+        workoutData[date] = (workoutData[date] || 0) + 1;
+    });
+
+    return workoutData;
+}
+
+function getWorkoutLevel(count) {
+    if (count === 0) return 0;
+    if (count === 1) return 1;
+    if (count === 2) return 2;
+    if (count === 3) return 3;
+    return 4; // 4+ workouts
+}
+
+function showHeatmapTooltip(event) {
+    const tooltip = document.getElementById('heatmapTooltip');
+    if (!tooltip) return;
+
+    const date = event.target.getAttribute('data-date');
+    const count = event.target.getAttribute('data-count');
+
+    const workoutText = count === '1' ? 'workout' : 'workouts';
+    tooltip.textContent = `${count} ${workoutText} on ${date}`;
+
+    const rect = event.target.getBoundingClientRect();
+    tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+    tooltip.style.top = rect.top - tooltip.offsetHeight - 5 + 'px';
+
+    tooltip.classList.add('show');
+}
+
+function hideHeatmapTooltip() {
+    const tooltip = document.getElementById('heatmapTooltip');
+    if (tooltip) {
+        tooltip.classList.remove('show');
+    }
+}
+
+function updateHeatmapStats() {
+    const totalWorkouts = userData.workoutSessions.length;
+    const currentStreak = calculateCurrentStreak();
+    const longestStreak = calculateLongestStreak();
+    const thisWeekWorkouts = calculateThisWeekWorkouts();
+
+    const totalWorkoutsEl = document.getElementById('totalWorkouts');
+    const currentStreakEl = document.getElementById('currentStreak');
+    const longestStreakEl = document.getElementById('longestStreak');
+    const thisWeekWorkoutsEl = document.getElementById('thisWeekWorkouts');
+
+    if (totalWorkoutsEl) totalWorkoutsEl.textContent = totalWorkouts;
+    if (currentStreakEl) currentStreakEl.textContent = currentStreak;
+    if (longestStreakEl) longestStreakEl.textContent = longestStreak;
+    if (thisWeekWorkoutsEl) thisWeekWorkoutsEl.textContent = thisWeekWorkouts;
+}
+
+function calculateCurrentStreak() {
+    if (userData.workoutSessions.length === 0) return 0;
+
+    const today = new Date();
+    const workoutDates = userData.workoutSessions
+        .map(session => new Date(session.date).toLocaleDateString())
+        .filter((date, index, arr) => arr.indexOf(date) === index) // Remove duplicates
+        .sort((a, b) => new Date(b) - new Date(a)); // Sort descending
+
+    let streak = 0;
+    let currentDate = new Date(today);
+
+    for (let i = 0; i < workoutDates.length; i++) {
+        const workoutDate = new Date(workoutDates[i]);
+        const daysDiff = Math.floor((currentDate - workoutDate) / (1000 * 60 * 60 * 24));
+
+        if (daysDiff <= 1) {
+            streak++;
+            currentDate = workoutDate;
+        } else {
+            break;
+        }
+    }
+
+    return streak;
+}
+
+function calculateLongestStreak() {
+    if (userData.workoutSessions.length === 0) return 0;
+
+    const workoutDates = userData.workoutSessions
+        .map(session => new Date(session.date).toLocaleDateString())
+        .filter((date, index, arr) => arr.indexOf(date) === index) // Remove duplicates
+        .sort((a, b) => new Date(a) - new Date(b)); // Sort ascending
+
+    let longestStreak = 0;
+    let currentStreak = 1;
+
+    for (let i = 1; i < workoutDates.length; i++) {
+        const prevDate = new Date(workoutDates[i - 1]);
+        const currentDate = new Date(workoutDates[i]);
+        const daysDiff = Math.floor((currentDate - prevDate) / (1000 * 60 * 60 * 24));
+
+        if (daysDiff === 1) {
+            currentStreak++;
+        } else {
+            longestStreak = Math.max(longestStreak, currentStreak);
+            currentStreak = 1;
+        }
+    }
+
+    return Math.max(longestStreak, currentStreak);
+}
+
+function calculateThisWeekWorkouts() {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay()); // Start of week (Sunday)
+
+    return userData.workoutSessions.filter(session => {
+        const sessionDate = new Date(session.date);
+        return sessionDate >= startOfWeek && sessionDate <= today;
+    }).length;
+}
+
+
+
+function addSampleWorkoutData() {
+    const sampleWorkouts = [];
+    const today = new Date();
+
+    // Generate sample workouts for the last 3 months
+    for (let i = 0; i < 90; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+
+        // Random chance of having a workout (about 40% chance)
+        if (Math.random() < 0.4) {
+            const workoutTypes = ['strength', 'cardio', 'hiit', 'yoga', 'pilates'];
+            const intensities = ['light', 'moderate', 'vigorous', 'intense'];
+
+            sampleWorkouts.push({
+                id: Date.now() + i,
+                date: date.toISOString().split('T')[0],
+                type: workoutTypes[Math.floor(Math.random() * workoutTypes.length)],
+                duration: 30 + Math.floor(Math.random() * 60), // 30-90 minutes
+                intensity: intensities[Math.floor(Math.random() * intensities.length)],
+                notes: 'Sample workout data',
+                timestamp: date.toISOString()
+            });
+        }
+    }
+
+    userData.workoutSessions = sampleWorkouts;
+    saveUserData();
+}
+
+

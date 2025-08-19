@@ -266,6 +266,54 @@
 
             <!-- My Workouts Section (initially hidden) -->
             <div id="workoutsSection" class="main-section hidden">
+                <!-- Workout Heatmap -->
+                <section class="workout-heatmap-section">
+                    <h2>🔥 Workout Activity</h2>
+                    <div class="heatmap-container">
+                        <div class="heatmap-header">
+                            <div class="heatmap-stats">
+                                <div class="heatmap-stat">
+                                    <span class="stat-number" id="totalWorkouts">0</span>
+                                    <span class="stat-label">Total Workouts</span>
+                                </div>
+                                <div class="heatmap-stat">
+                                    <span class="stat-number" id="currentStreak">0</span>
+                                    <span class="stat-label">Current Streak</span>
+                                </div>
+                                <div class="heatmap-stat">
+                                    <span class="stat-number" id="longestStreak">0</span>
+                                    <span class="stat-label">Longest Streak</span>
+                                </div>
+                                <div class="heatmap-stat">
+                                    <span class="stat-number" id="thisWeekWorkouts">0</span>
+                                    <span class="stat-label">This Week</span>
+                                </div>
+                            </div>
+                            <div class="heatmap-controls">
+                                <button class="heatmap-btn secondary" id="viewStatsBtn">📊 View Stats</button>
+                            </div>
+                        </div>
+
+                        <div class="heatmap-calendar">
+                            <div class="heatmap-months" id="heatmapMonths"></div>
+                            <div class="heatmap-grid" id="heatmapGrid"></div>
+                            <div class="heatmap-legend">
+                                <span class="legend-label">Less</span>
+                                <div class="legend-colors">
+                                    <div class="legend-color" data-level="0"></div>
+                                    <div class="legend-color" data-level="1"></div>
+                                    <div class="legend-color" data-level="2"></div>
+                                    <div class="legend-color" data-level="3"></div>
+                                    <div class="legend-color" data-level="4"></div>
+                                </div>
+                                <span class="legend-label">More</span>
+                            </div>
+                        </div>
+
+                        <div class="heatmap-tooltip" id="heatmapTooltip"></div>
+                    </div>
+                </section>
+
                 <section class="saved-workouts-section">
                     <h2>My Saved Workout Plans</h2>
                     <div id="savedWorkoutsList" class="saved-workouts-list">
