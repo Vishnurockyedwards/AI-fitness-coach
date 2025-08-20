@@ -19,6 +19,7 @@
                     <a href="#" class="nav-link" id="workoutsLink">My Workouts</a>
                     <a href="#" class="nav-link" id="nutritionLink">Nutrition Tracker</a>
                     <a href="#" class="nav-link" id="remindersLink">Reminders</a>
+                    <a href="#" class="nav-link" id="settingsLink">⚙️ Settings</a>
                 </div>
                 <input class="searchbox" type="text" placeholder="Search exercises...">
                 <button class="chat-btn" id="chatToggle">
@@ -521,65 +522,211 @@
             <!-- Reminders Section (initially hidden) -->
             <div id="remindersSection" class="main-section hidden">
                 <section class="reminders-section">
-                    <h2>Workout & Nutrition Reminders</h2>
-                    
-                    <div class="reminders-container">
-                        <div class="active-reminders">
-                            <h3>Active Reminders</h3>
-                            <div id="remindersList" class="reminders-list">
-                                <!-- Reminders will be added here dynamically -->
-                                <p class="empty-state">No active reminders set.</p>
+                    <h2>⏰ Fitness Reminders</h2>
+                    <p class="section-description">Set up personalized reminders to stay on track with your fitness goals.</p>
+
+                    <!-- Add Reminder Form -->
+                    <div class="reminder-form-container">
+                        <h3>📝 Create New Reminder</h3>
+                        <form id="reminderForm" class="reminder-form">
+                            <div class="form-group">
+                                <label for="reminderTitle">Reminder Title</label>
+                                <input type="text" id="reminderTitle" placeholder="e.g., Morning Workout" required>
                             </div>
-                        </div>
-                        
-                        <div class="add-reminder">
-                            <h3>Set New Reminder</h3>
-                            <form id="reminderForm">
+
+                            <div class="form-row">
                                 <div class="form-group">
-                                    <label for="reminderTitle">Reminder Title</label>
-                                    <input type="text" id="reminderTitle" class="form-control" placeholder="e.g. Morning Workout" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="reminderType">Reminder Type</label>
-                                    <select id="reminderType" class="form-control" required>
-                                        <option value="workout">Workout</option>
-                                        <option value="nutrition">Nutrition/Meal</option>
-                                        <option value="water">Water Intake</option>
-                                        <option value="other">Other</option>
+                                    <label for="reminderType">Type</label>
+                                    <select id="reminderType" required>
+                                        <option value="workout">🏋️ Workout</option>
+                                        <option value="nutrition">🍎 Nutrition</option>
+                                        <option value="hydration">💧 Hydration</option>
+                                        <option value="general">📋 General</option>
                                     </select>
                                 </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="reminderTime">Time</label>
-                                        <input type="time" id="reminderTime" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="reminderDays">Days</label>
-                                        <div class="day-selector">
-                                            <label><input type="checkbox" value="mon"> Mon</label>
-                                            <label><input type="checkbox" value="tue"> Tue</label>
-                                            <label><input type="checkbox" value="wed"> Wed</label>
-                                            <label><input type="checkbox" value="thu"> Thu</label>
-                                            <label><input type="checkbox" value="fri"> Fri</label>
-                                            <label><input type="checkbox" value="sat"> Sat</label>
-                                            <label><input type="checkbox" value="sun"> Sun</label>
-                                        </div>
-                                    </div>
-                                </div>
+
                                 <div class="form-group">
-                                    <label for="reminderNote">Note (Optional)</label>
-                                    <textarea id="reminderNote" class="form-control" placeholder="Add details about this reminder"></textarea>
+                                    <label for="reminderTime">Time</label>
+                                    <input type="time" id="reminderTime" required>
                                 </div>
-                                <button type="submit" class="submit-btn">Set Reminder</button>
-                            </form>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reminderNote">Note (Optional)</label>
+                                <textarea id="reminderNote" placeholder="Additional details about this reminder..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Days of the Week</label>
+                                <div class="days-selector">
+                                    <label class="day-checkbox">
+                                        <input type="checkbox" value="monday" checked>
+                                        <span>Mon</span>
+                                    </label>
+                                    <label class="day-checkbox">
+                                        <input type="checkbox" value="tuesday" checked>
+                                        <span>Tue</span>
+                                    </label>
+                                    <label class="day-checkbox">
+                                        <input type="checkbox" value="wednesday" checked>
+                                        <span>Wed</span>
+                                    </label>
+                                    <label class="day-checkbox">
+                                        <input type="checkbox" value="thursday" checked>
+                                        <span>Thu</span>
+                                    </label>
+                                    <label class="day-checkbox">
+                                        <input type="checkbox" value="friday" checked>
+                                        <span>Fri</span>
+                                    </label>
+                                    <label class="day-checkbox">
+                                        <input type="checkbox" value="saturday">
+                                        <span>Sat</span>
+                                    </label>
+                                    <label class="day-checkbox">
+                                        <input type="checkbox" value="sunday">
+                                        <span>Sun</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary">
+                                <span>⏰ Create Reminder</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Reminders List -->
+                    <div class="reminders-list-container">
+                        <h3>📋 Your Reminders</h3>
+                        <div id="remindersList" class="reminders-list">
+                            <div class="no-reminders">
+                                <div class="no-reminders-icon">⏰</div>
+                                <h4>No reminders set yet</h4>
+                                <p>Create your first reminder above to get started!</p>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="reminder-permissions hidden" id="reminderPermissions">
+
+                    <!-- Notification Permissions -->
+                    <div id="reminderPermissions" class="notification-permissions">
                         <div class="permission-card">
-                            <h3>Enable Notifications</h3>
-                            <p>To receive reminders, please allow notifications in your browser.</p>
-                            <button id="enableNotificationsBtn" class="submit-btn">Enable Notifications</button>
+                            <div class="permission-icon">🔔</div>
+                            <div class="permission-content">
+                                <h4>Enable Browser Notifications</h4>
+                                <p>Allow notifications to receive your fitness reminders even when the app is closed.</p>
+                                <button id="enableNotifications" class="btn-secondary">Enable Notifications</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Settings Section (initially hidden) -->
+            <div id="settingsSection" class="main-section hidden">
+                <section class="settings-section">
+                    <h2>⚙️ Settings & Data Management</h2>
+
+                    <!-- Data Management -->
+                    <div class="settings-group">
+                        <h3>📊 Data Management</h3>
+                        <div class="settings-item">
+                            <div class="setting-info">
+                                <h4>Backup Your Data</h4>
+                                <p>Download a backup of all your fitness data</p>
+                            </div>
+                            <button class="settings-btn" id="downloadBackupBtn">📥 Download Backup</button>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="setting-info">
+                                <h4>Restore Data</h4>
+                                <p>Restore your data from a backup file</p>
+                            </div>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="restoreFileInput" accept=".json" style="display: none;">
+                                <button class="settings-btn secondary" id="restoreDataBtn">📤 Restore from File</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="setting-info">
+                                <h4>Export Data</h4>
+                                <p>Export your data in different formats</p>
+                            </div>
+                            <div class="export-buttons">
+                                <button class="settings-btn" id="exportJsonBtn">📄 Export JSON</button>
+                                <button class="settings-btn" id="exportCsvBtn">📊 Export CSV</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="setting-info">
+                                <h4>Clear All Data</h4>
+                                <p>⚠️ This will permanently delete all your data</p>
+                            </div>
+                            <button class="settings-btn danger" id="clearDataBtn">🗑️ Clear All Data</button>
+                        </div>
+                    </div>
+
+                    <!-- Storage Info -->
+                    <div class="settings-group">
+                        <h3>💾 Storage Information</h3>
+                        <div class="storage-info">
+                            <div class="storage-item">
+                                <span class="storage-label">Workout Plans:</span>
+                                <span class="storage-value" id="workoutPlansCount">0</span>
+                            </div>
+                            <div class="storage-item">
+                                <span class="storage-label">Workout Sessions:</span>
+                                <span class="storage-value" id="workoutSessionsCount">0</span>
+                            </div>
+                            <div class="storage-item">
+                                <span class="storage-label">Meals Logged:</span>
+                                <span class="storage-value" id="mealsCount">0</span>
+                            </div>
+                            <div class="storage-item">
+                                <span class="storage-label">Reminders:</span>
+                                <span class="storage-value" id="remindersCount">0</span>
+                            </div>
+                            <div class="storage-item">
+                                <span class="storage-label">Last Backup:</span>
+                                <span class="storage-value" id="lastBackupDate">Never</span>
+                            </div>
+                            <div class="storage-item">
+                                <span class="storage-label">Data Size:</span>
+                                <span class="storage-value" id="dataSize">0 KB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- App Settings -->
+                    <div class="settings-group">
+                        <h3>🔧 App Settings</h3>
+                        <div class="settings-item">
+                            <div class="setting-info">
+                                <h4>Auto Backup</h4>
+                                <p>Automatically backup your data daily</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoBackupToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="setting-info">
+                                <h4>Data Retention</h4>
+                                <p>How long to keep old data (days)</p>
+                            </div>
+                            <select class="settings-select" id="dataRetentionSelect">
+                                <option value="30">30 days</option>
+                                <option value="60">60 days</option>
+                                <option value="90" selected>90 days</option>
+                                <option value="180">180 days</option>
+                                <option value="365">1 year</option>
+                                <option value="-1">Forever</option>
+                            </select>
                         </div>
                     </div>
                 </section>

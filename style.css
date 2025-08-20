@@ -479,28 +479,62 @@ nav {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 350px;
-    height: 500px;
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    width: 380px;
+    height: 550px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
     z-index: 1000;
     overflow: hidden;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chatbot-container:not(.hidden) {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .chat-header {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, #ff8a65 100%);
     color: white;
-    padding: 15px 20px;
+    padding: 20px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-radius: 20px 20px 0 0;
+    position: relative;
+}
+
+.chat-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px 20px 0 0;
+    z-index: -1;
 }
 
 .chat-header h3 {
     margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-header h3::before {
+    content: '🤖';
     font-size: 1.2rem;
 }
 
@@ -518,68 +552,1034 @@ nav {
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 25px 20px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 87, 34, 0.3) transparent;
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(255, 87, 34, 0.3);
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 87, 34, 0.5);
 }
 
 .message {
-    margin-bottom: 15px;
     display: flex;
     align-items: flex-start;
+    margin-bottom: 20px;
+    animation: messageSlideIn 0.3s ease-out;
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .message.user {
     justify-content: flex-end;
-}
-
-.bot-avatar {
-    width: 35px;
-    height: 35px;
-    margin-right: 10px;
-    border-radius: 50%;
-}
-
-.message-content {
-    background-color: #f1f1f1;
-    padding: 10px 15px;
-    border-radius: 18px;
-    max-width: 80%;
+    flex-direction: row-reverse;
 }
 
 .message.user .message-content {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, #ff8a65 100%);
     color: white;
+    margin-left: 50px;
+    border-radius: 20px 20px 5px 20px;
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
 }
 
+.message.bot .message-content {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--dark);
+    margin-right: 50px;
+    border-radius: 20px 20px 20px 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.message-content {
+    padding: 15px 20px;
+    max-width: 75%;
+    word-wrap: break-word;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    position: relative;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+    text-align: right;
+}
+
+.message.user .message-time {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: left;
+}
+
+.bot-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 87, 34, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Typing Indicator */
 .typing-indicator .message-content {
-    color: #888;
-    font-style: italic;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px 20px;
+    border-radius: 20px 20px 20px 5px;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: typingDot 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+.typing-dots span:nth-child(3) { animation-delay: 0s; }
+
+@keyframes typingDot {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .chat-input {
     display: flex;
     align-items: center;
-    padding: 10px 15px;
-    border-top: 1px solid #eee;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0 0 20px 20px;
+    gap: 10px;
 }
 
 .chat-input input {
     flex: 1;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 87, 34, 0.2);
+    border-radius: 25px;
     outline: none;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+}
+
+.chat-input input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+    background: white;
+}
+
+.chat-input input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .chat-input button {
-    background: transparent;
+    background: var(--primary);
     border: none;
-    margin-left: 10px;
+    padding: 10px 12px;
+    border-radius: 50%;
     cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+}
+
+.chat-input button:hover {
+    background: #e64a19;
+    transform: scale(1.05);
 }
 
 .chat-input button img {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+#voice-btn {
+    background: #4CAF50;
+    color: white;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+    min-width: auto;
+    height: auto;
+    white-space: nowrap;
+}
+
+#voice-btn:hover {
+    background: #45a049;
+}
+
+/* Quick Actions */
+.quick-actions {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 87, 34, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 87, 34, 0.1);
+}
+
+.quick-action-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.quick-action-btn {
+    display: inline-block;
+    background: rgba(255, 87, 34, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(255, 87, 34, 0.2);
+    padding: 8px 12px;
+    margin: 4px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quick-action-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 87, 34, 0.3);
+}
+
+/* Action Buttons */
+.action-buttons-container {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(76, 175, 80, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(76, 175, 80, 0.1);
+}
+
+.action-buttons-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4CAF50;
+    margin-bottom: 10px;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.action-btn {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.action-btn:hover {
+    background: #4CAF50;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Settings Section */
+.settings-section {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.settings-section h2 {
+    color: var(--secondary);
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.settings-group {
+    margin-bottom: 40px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.settings-group h3 {
+    color: var(--primary);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    border-bottom: 2px solid rgba(255, 87, 34, 0.2);
+    padding-bottom: 10px;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.settings-item:last-child {
+    border-bottom: none;
+}
+
+.setting-info h4 {
+    margin: 0 0 5px 0;
+    color: var(--dark);
+    font-size: 1.1rem;
+}
+
+.setting-info p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.settings-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.settings-btn:hover {
+    background: #e64a19;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 87, 34, 0.3);
+}
+
+.settings-btn.secondary {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.settings-btn.secondary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.settings-btn.danger {
+    background: #f44336;
+}
+
+.settings-btn.danger:hover {
+    background: #d32f2f;
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+.export-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.storage-info {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.storage-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.storage-item:last-child {
+    border-bottom: none;
+}
+
+.storage-label {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.storage-value {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: var(--primary);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.settings-select {
+    padding: 8px 12px;
+    border: 2px solid rgba(255, 87, 34, 0.3);
+    border-radius: 8px;
+    background: white;
+    color: var(--dark);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.settings-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+}
+
+/* Reminders Section */
+.reminders-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.reminders-section h2 {
+    color: var(--secondary);
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.section-description {
+    text-align: center;
+    color: var(--gray);
+    margin-bottom: 40px;
+    font-size: 1.1rem;
+}
+
+.reminder-form-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.reminder-form-container h3 {
+    color: var(--primary);
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+}
+
+.reminder-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px 16px;
+    border: 2px solid rgba(255, 87, 34, 0.2);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+    background: white;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.days-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.day-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(255, 87, 34, 0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.day-checkbox:hover {
+    background: rgba(255, 87, 34, 0.1);
+    border-color: var(--primary);
+}
+
+.day-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.day-checkbox input[type="checkbox"]:checked + span {
+    color: white;
+}
+
+.day-checkbox:has(input[type="checkbox"]:checked) {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.day-checkbox span {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.reminders-list-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.reminders-list-container h3 {
+    color: var(--primary);
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+}
+
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reminder-item {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.reminder-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reminder-info {
+    flex: 1;
+}
+
+.reminder-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 5px;
+}
+
+.reminder-details {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.reminder-type {
+    background: rgba(255, 87, 34, 0.1);
+    color: var(--primary);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.reminder-time {
+    font-weight: 600;
+}
+
+.reminder-days {
+    font-size: 0.8rem;
+}
+
+.reminder-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.reminder-btn {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.reminder-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.reminder-btn.delete {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.reminder-btn.delete:hover {
+    background: #f44336;
+    color: white;
+}
+
+.no-reminders {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray);
+}
+
+.no-reminders-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.no-reminders h4 {
+    margin-bottom: 10px;
+    color: var(--dark);
+}
+
+.notification-permissions {
+    background: rgba(255, 193, 7, 0.1);
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.permission-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.permission-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.permission-content h4 {
+    margin-bottom: 8px;
+    color: var(--dark);
+}
+
+.permission-content p {
+    margin-bottom: 15px;
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+/* Reminders Section */
+.reminders-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.reminders-section h2 {
+    color: var(--secondary);
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.section-description {
+    text-align: center;
+    color: var(--gray);
+    margin-bottom: 40px;
+    font-size: 1.1rem;
+}
+
+.reminder-form-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.reminder-form-container h3 {
+    color: var(--primary);
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+}
+
+.reminder-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px 16px;
+    border: 2px solid rgba(255, 87, 34, 0.2);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+    background: white;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.days-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.day-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(255, 87, 34, 0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.day-checkbox:hover {
+    background: rgba(255, 87, 34, 0.1);
+    border-color: var(--primary);
+}
+
+.day-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.day-checkbox input[type="checkbox"]:checked + span {
+    color: white;
+}
+
+.day-checkbox:has(input[type="checkbox"]:checked) {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.day-checkbox span {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.reminders-list-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.reminders-list-container h3 {
+    color: var(--primary);
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+}
+
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reminder-item {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.reminder-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reminder-info {
+    flex: 1;
+}
+
+.reminder-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 5px;
+}
+
+.reminder-details {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.reminder-type {
+    background: rgba(255, 87, 34, 0.1);
+    color: var(--primary);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.reminder-time {
+    font-weight: 600;
+}
+
+.reminder-days {
+    font-size: 0.8rem;
+}
+
+.reminder-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.reminder-btn {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.reminder-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.reminder-btn.delete {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.reminder-btn.delete:hover {
+    background: #f44336;
+    color: white;
+}
+
+.no-reminders {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray);
+}
+
+.no-reminders-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.no-reminders h4 {
+    margin-bottom: 10px;
+    color: var(--dark);
+}
+
+.notification-permissions {
+    background: rgba(255, 193, 7, 0.1);
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.permission-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.permission-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.permission-content h4 {
+    margin-bottom: 8px;
+    color: var(--dark);
+}
+
+.permission-content p {
+    margin-bottom: 15px;
+    color: var(--gray);
+    font-size: 0.9rem;
 }
 
 
@@ -589,6 +1589,36 @@ nav {
     display: flex;
     margin-right: 20px;
     color: white;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 1001;
+}
+
+.mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: white;
+    margin: 3px 0;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
 }
 
 .nav-link {
@@ -1822,7 +2852,134 @@ nav {
     font-style: italic;
 }
 
-/* Responsive Styles */
+/* Enhanced Responsive Styles - Mobile First Approach */
+
+/* Extra Large Devices (1400px and up) */
+@media (min-width: 1400px) {
+    .main-container {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .hero-title {
+        font-size: 4.5rem;
+    }
+
+    .workout-heatmap-section,
+    .saved-workouts-section,
+    .nutrition-tracker-section {
+        max-width: 1200px;
+    }
+}
+
+/* Large Devices (1200px to 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+    .hero-title {
+        font-size: 4rem;
+    }
+
+    .nutrition-summary {
+        gap: 40px;
+    }
+}
+
+/* Medium Devices (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .main-container {
+        padding: 0 20px;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+    }
+
+    .heatmap-stats {
+        gap: 25px;
+    }
+
+    .nutrition-summary {
+        gap: 25px;
+    }
+}
+
+/* Tablet and Small Desktop (768px to 991px) */
+@media (max-width: 991px) {
+    .hero {
+        padding: 0 3%;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        line-height: 1.1;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+    }
+
+    .enhanced-btn {
+        padding: 12px 35px;
+        font-size: 1.1rem;
+    }
+
+    .floating-element {
+        font-size: 1.8rem;
+        opacity: 0.6;
+    }
+
+    nav {
+        padding: 0 3%;
+        height: 70px;
+    }
+
+    .logo {
+        font-size: 2rem;
+    }
+
+    .content-wrapper {
+        padding: 100px 3% 60px;
+    }
+
+    .workout-heatmap-section,
+    .saved-workouts-section,
+    .nutrition-tracker-section,
+    .reminders-section {
+        margin: 0 15px 40px;
+        padding: 35px 25px;
+    }
+
+    .calorie-card,
+    .meal-history,
+    .vitals-card {
+        min-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .schedule-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+    }
+
+    .exercise-list {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .action-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .action-btn {
+        flex: 1;
+        min-width: 180px;
+        margin: 5px;
+    }
+}
+
+/* Original Tablet Styles (max-width: 992px) */
 @media (max-width: 992px) {
     .nutrition-summary,
     .reminders-container {
@@ -1874,28 +3031,107 @@ nav {
     }
 }
 
+/* Enhanced Mobile Styles (768px and below) */
 @media (max-width: 768px) {
+    /* Hero Section Mobile */
+    .hero {
+        height: 90vh;
+        padding: 0 4%;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        line-height: 1.1;
+        margin-bottom: 15px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 25px;
+        line-height: 1.4;
+    }
+
+    .enhanced-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+        border-radius: 25px;
+    }
+
+    .floating-element {
+        font-size: 1.5rem;
+        opacity: 0.5;
+    }
+
+    /* Navigation Mobile */
+    nav {
+        height: 60px;
+        padding: 0 4%;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+    }
+
+    /* Content Sections Mobile */
+    .content-wrapper {
+        padding: 80px 4% 40px;
+    }
+
     .reminders-section,
     .nutrition-tracker-section,
     .saved-workouts-section,
     .workout-heatmap-section {
-        padding: 30px 20px;
+        padding: 25px 15px;
+        margin: 0 5px 25px;
+        border-radius: 15px;
     }
 
+    .user-form-section {
+        padding: 25px 20px;
+        margin: 0 5px 30px;
+    }
+
+    /* Form Elements Mobile */
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-group {
+        min-width: 100%;
+    }
+
+    .form-control {
+        padding: 12px 15px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    /* Workout Heatmap Mobile */
     .heatmap-header {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        gap: 20px;
     }
 
     .heatmap-stats {
         justify-content: center;
-        gap: 20px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .heatmap-stat {
+        min-width: 70px;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
     }
 
     .heatmap-grid {
         grid-template-columns: repeat(26, 1fr);
         gap: 1px;
+        margin: 15px 0;
     }
 
     .heatmap-day {
@@ -1903,11 +3139,37 @@ nav {
         height: 10px;
     }
 
-    .notification-panel {
-        width: calc(100% - 40px);
-        right: 20px;
+    .heatmap-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
+    .heatmap-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    /* Nutrition Section Mobile */
+    .nutrition-summary {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .calorie-card {
+        padding: 20px;
+    }
+
+    .calorie-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    .macro-bar {
+        height: 6px;
+    }
+
+    /* Hydration Tracker Mobile */
     .hydration-main {
         flex-direction: column;
         gap: 20px;
@@ -1919,24 +3181,218 @@ nav {
 
     .hydration-controls {
         gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .water-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+        min-width: 80px;
+    }
+
+    /* Exercise List Mobile */
+    .exercise-list {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .exercise-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .exercise-item img {
+        width: 100%;
+        max-width: 200px;
+        margin-bottom: 15px;
+    }
+
+    /* Saved Workouts Mobile */
+    .saved-workout-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .saved-workout-title {
+        font-size: 1.1rem;
+    }
+
+    .saved-workout-info {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .saved-workout-stat {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+
+    /* Notifications Mobile */
+    .notification-panel {
+        width: calc(100% - 20px);
+        right: 10px;
+        max-height: 70vh;
+    }
+
+    /* Particles Mobile Optimization */
+    #particles-js {
+        opacity: 0.3;
+    }
+
+    /* Chatbot Tablet */
+    .chatbot-container {
+        width: 400px;
+        height: 500px;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .message-content {
+        max-width: 80%;
     }
 }
 
+/* Small Mobile Devices (576px and below) */
 @media (max-width: 576px) {
+    /* Hero Section Small Mobile */
+    .hero {
+        height: 85vh;
+        padding: 0 5%;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.1;
+        margin-bottom: 12px;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+
+    .enhanced-btn {
+        padding: 10px 25px;
+        font-size: 0.95rem;
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .floating-element {
+        font-size: 1.2rem;
+        opacity: 0.4;
+    }
+
+    /* Navigation Small Mobile */
+    nav {
+        height: 55px;
+        padding: 0 5%;
+    }
+
+    .logo {
+        font-size: 1.6rem;
+    }
+
+    /* Content Sections Small Mobile */
+    .content-wrapper {
+        padding: 70px 5% 30px;
+    }
+
+    .reminders-section,
+    .nutrition-tracker-section,
+    .saved-workouts-section,
+    .workout-heatmap-section {
+        padding: 20px 12px;
+        margin: 0 2px 20px;
+        border-radius: 12px;
+    }
+
+    .user-form-section {
+        padding: 20px 15px;
+        margin: 0 2px 25px;
+    }
+
+    /* Form Elements Small Mobile */
     .form-actions {
         flex-direction: column;
         gap: 10px;
     }
 
-    .search-box {
-        flex-direction: column;
+    .form-control {
+        padding: 14px 16px;
+        font-size: 16px;
+        border-radius: 8px;
     }
 
+    .submit-btn,
+    .secondary-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    /* Search Box Small Mobile */
+    .search-box {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .searchbox {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* Day Selector Small Mobile */
     .day-selector {
         flex-direction: column;
         align-items: flex-start;
+        gap: 10px;
     }
 
+    /* Workout Heatmap Small Mobile */
+    .heatmap-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        text-align: center;
+    }
+
+    .heatmap-stat {
+        min-width: auto;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+    }
+
+    .stat-number {
+        font-size: 1.3rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+    }
+
+    .heatmap-grid {
+        grid-template-columns: repeat(20, 1fr);
+        gap: 1px;
+        margin: 10px 0;
+    }
+
+    .heatmap-day {
+        width: 8px;
+        height: 8px;
+    }
+
+    .heatmap-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        min-width: 80px;
+    }
+
+    /* Hydration Tracker Small Mobile */
     .water-bottle-container {
         width: 100px;
         height: 160px;
@@ -1945,10 +3401,392 @@ nav {
     .hydration-controls {
         flex-direction: column;
         align-items: center;
+        gap: 8px;
     }
 
     .water-btn {
         width: 120px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .hydration-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        text-align: center;
+    }
+
+    .hydration-stat {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    /* Nutrition Small Mobile */
+    .calorie-card {
+        padding: 15px;
+        text-align: center;
+    }
+
+    .calorie-circle {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 15px;
+    }
+
+    .macro-item {
+        margin-bottom: 12px;
+    }
+
+    .macro-bar {
+        height: 5px;
+        margin: 5px 0;
+    }
+
+    /* Exercise List Small Mobile */
+    .exercise-item {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .exercise-item img {
+        max-width: 150px;
+        margin-bottom: 10px;
+    }
+
+    .exercise-item h3 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+
+    .exercise-item p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    /* Saved Workouts Small Mobile */
+    .saved-workout-item {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .saved-workout-title {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+
+    .saved-workout-info {
+        flex-direction: column;
+        gap: 6px;
+        align-items: flex-start;
+    }
+
+    .saved-workout-stat {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    .saved-workout-actions {
+        margin-top: 10px;
+        gap: 8px;
+    }
+
+    .saved-workout-actions button {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Notifications Small Mobile */
+    .notification-panel {
+        width: calc(100% - 10px);
+        right: 5px;
+        max-height: 60vh;
+    }
+
+    .notification-item {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+
+    /* Particles Extra Light on Small Mobile */
+    #particles-js {
+        opacity: 0.2;
+    }
+
+    /* Typography Small Mobile */
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.2rem; }
+    h4 { font-size: 1rem; }
+
+    /* Spacing Adjustments */
+    .main-section {
+        padding: 15px 0;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+    }
+
+    /* Chatbot Mobile */
+    .chatbot-container {
+        width: calc(100vw - 20px);
+        height: calc(100vh - 100px);
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        border-radius: 15px;
+    }
+
+    .chat-header {
+        padding: 15px 20px;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .chat-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .chat-messages {
+        padding: 15px;
+    }
+
+    .message-content {
+        max-width: 85%;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+
+    .bot-avatar {
+        width: 35px;
+        height: 35px;
+    }
+
+    .chat-input {
+        padding: 12px 15px;
+        gap: 8px;
+    }
+
+    .chat-input input {
+        padding: 10px 15px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+
+    .chat-input button {
+        min-width: 40px;
+        height: 40px;
+    }
+
+    #voice-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .quick-action-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        margin: 2px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .action-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    /* Settings Mobile */
+    .settings-section {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .settings-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .export-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .settings-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .storage-info {
+        padding: 15px;
+    }
+
+    .storage-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    /* Reminders Mobile */
+    .reminders-section {
+        padding: 20px;
+    }
+
+    .reminder-form-container,
+    .reminders-list-container {
+        padding: 20px;
+        margin: 10px 0;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .days-selector {
+        justify-content: center;
+    }
+
+    .day-checkbox {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .reminder-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .reminder-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .reminder-btn {
+        flex: 1;
+        text-align: center;
+    }
+
+    .permission-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+}
+
+/* Touch Device Optimizations */
+.touch-device button,
+.touch-device .nav-link,
+.touch-device .heatmap-day {
+    min-height: 44px; /* Apple's recommended minimum touch target */
+    min-width: 44px;
+}
+
+.touch-device .water-btn {
+    min-height: 44px;
+    padding: 10px 15px;
+}
+
+.touch-device .heatmap-btn {
+    min-height: 44px;
+    padding: 10px 20px;
+}
+
+/* Mobile Device Performance Optimizations */
+.mobile-device * {
+    -webkit-transform: translateZ(0); /* Force hardware acceleration */
+    transform: translateZ(0);
+}
+
+.mobile-device .floating-element {
+    animation-duration: 8s; /* Slower animations on mobile */
+}
+
+.mobile-device #particles-js {
+    opacity: 0.2 !important;
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* High DPI Display Optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .heatmap-day {
+        border-radius: 1px;
+    }
+
+    .water-bottle {
+        border-width: 2px;
+    }
+}
+
+/* Landscape Mobile Optimizations */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        height: 100vh;
+        padding: 0 5%;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .enhanced-btn {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
+
+    .floating-element {
+        display: none; /* Hide floating elements in landscape */
+    }
+
+    nav {
+        height: 50px;
+    }
+
+    .logo {
+        font-size: 1.4rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .hero,
+    .floating-element,
+    #particles-js,
+    .mobile-menu-toggle,
+    .notification-panel {
+        display: none !important;
+    }
+
+    .workout-heatmap-section,
+    .nutrition-tracker-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
     }
 }
 /* Utility Classes */
