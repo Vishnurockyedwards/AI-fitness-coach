@@ -79,7 +79,7 @@ const reminderTime = document.getElementById('reminderTime');
 const reminderNote = document.getElementById('reminderNote');
 const remindersList = document.getElementById('remindersList');
 const reminderPermissions = document.getElementById('reminderPermissions');
-const enableNotificationsBtn = document.getElementById('enableNotificationsBtn');
+const enableNotificationsBtn = document.getElementById('enableNotifications');
 // Wearable elements
 const connectWearableBtn = document.getElementById('connectWearableBtn');
 const disconnectWearableBtn = document.getElementById('disconnectWearableBtn');
@@ -983,9 +983,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Enable notifications button
-    enableNotificationsBtn.addEventListener('click', function() {
-        requestNotificationPermission();
-    });
+    if (enableNotificationsBtn) {
+        enableNotificationsBtn.addEventListener('click', function() {
+            requestNotificationPermission();
+        });
+    }
 
     // Set up reminder checking timer (every minute)
     setInterval(checkReminders, 60000);
@@ -994,6 +996,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkReminders();
 
     // Hero typewriter effect
+    console.log('About to initialize typewriter');
     initHeroTypewriter();
 
     // Initialize nutrition helpers
@@ -1040,24 +1043,50 @@ document.addEventListener('DOMContentLoaded', function() {
 // Typewriter animation for hero heading
 function initHeroTypewriter() {
     const element = document.getElementById('typewriter');
-    if (!element) return;
+    if (!element) {
+        console.log('Typewriter element not found');
+        return;
+    }
 
-    const fullText = element.getAttribute('data-text') || '';
-    const typingSpeedMs = 70; // per character
-    const startDelayMs = 300; // initial delay
+    const fullText = element.getAttribute('data-text') || 'Your Personal AI Fitness Coach';
+    console.log('Starting typewriter with text:', fullText);
 
+    const typingSpeedMs = 80; // per character
+    const startDelayMs = 1000; // initial delay
+
+    // Clear any existing content and show we're starting
     element.textContent = '';
+    element.style.minWidth = '20px'; // Ensure element has some width
 
     let index = 0;
+
     function typeNext() {
-        if (index <= fullText.length) {
-            element.textContent = fullText.slice(0, index);
-            index += 1;
+        if (index < fullText.length) {
+            const currentText = fullText.slice(0, index + 1);
+            element.textContent = currentText;
+            console.log('Typed:', currentText);
+            index++;
             setTimeout(typeNext, typingSpeedMs);
+        } else {
+            console.log('Typewriter animation completed');
+            element.style.minWidth = 'auto'; // Reset width
         }
     }
 
-    setTimeout(typeNext, startDelayMs);
+    // Start the animation with a delay
+    console.log('Will start typewriter in', startDelayMs, 'ms');
+    setTimeout(() => {
+        console.log('Starting typewriter animation now');
+        typeNext();
+    }, startDelayMs);
+
+    // Fallback: if animation doesn't start within 3 seconds, show full text
+    setTimeout(() => {
+        if (element.textContent.length === 0) {
+            console.log('Typewriter fallback: showing full text');
+            element.textContent = fullText;
+        }
+    }, 3000);
 }
 
 // Build datalist for food quick-pick
@@ -1953,18 +1982,20 @@ function updateNutritionSummary() {
 function checkNotificationPermission() {
     if (!('Notification' in window)) {
         // Browser doesn't support notifications
-        reminderPermissions.classList.remove('hidden');
-        enableNotificationsBtn.disabled = true;
-        enableNotificationsBtn.textContent = 'Notifications Not Supported';
+        if (reminderPermissions) reminderPermissions.classList.remove('hidden');
+        if (enableNotificationsBtn) {
+            enableNotificationsBtn.disabled = true;
+            enableNotificationsBtn.textContent = 'Notifications Not Supported';
+        }
         return;
     }
 
     if (Notification.permission === 'granted') {
         // Permission already granted
-        reminderPermissions.classList.add('hidden');
+        if (reminderPermissions) reminderPermissions.classList.add('hidden');
     } else {
         // Permission not granted yet
-        reminderPermissions.classList.remove('hidden');
+        if (reminderPermissions) reminderPermissions.classList.remove('hidden');
     }
 }
 

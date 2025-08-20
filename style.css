@@ -30,6 +30,17 @@ body {
     line-height: 1.6;
 }
 
+/* Particles.js Background */
+/*particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}*/
+
 .main-container {
     position: relative;
     width: 100%;
