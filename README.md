@@ -195,10 +195,10 @@ We welcome contributions! Please follow these steps:
 5. Open a Pull Request
 
 ---
-
+<!-- 
 ## 📄 License
 
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details. -->
 
 ---
 
