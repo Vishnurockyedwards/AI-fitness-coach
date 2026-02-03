@@ -804,27 +804,10 @@ document.addEventListener('DOMContentLoaded', function() {
         generateWorkoutPlan();
     });
 
-    // Chat toggle
-    chatToggle.addEventListener('click', function() {
-        chatbot.classList.toggle('hidden');
-    });
-
-    // Close chat
-    closeChat.addEventListener('click', function() {
-        chatbot.classList.add('hidden');
-    });
-
-    // Send message
-    sendMessage.addEventListener('click', function() {
-        sendUserMessage();
-    });
-
-    // Send message on enter
-    userMessage.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendUserMessage();
-        }
-    });
+    // Chat toggle - handled in initChatbot()
+    // Close chat - handled in initChatbot()
+    // Send message - handled in initChatbot()
+    // Send message on enter - handled in initChatbot()
 
     // Filter exercise cards
     filterBtns.forEach(btn => {
@@ -2934,18 +2917,33 @@ function initChatbot() {
     const userMessage = document.getElementById('userMessage');
     const voiceBtn = document.getElementById('voice-btn');
 
+    console.log('Initializing chatbot...', {
+        chatToggle: !!chatToggle,
+        chatbot: !!chatbot,
+        closeChat: !!closeChat,
+        sendMessage: !!sendMessage,
+        userMessage: !!userMessage
+    });
+
     // Toggle chatbot visibility
     if (chatToggle && chatbot) {
-        chatToggle.addEventListener('click', () => {
+        chatToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Chat toggle clicked');
             chatbot.classList.toggle('hidden');
+            console.log('Chatbot hidden class:', chatbot.classList.contains('hidden'));
+
             if (!chatbot.classList.contains('hidden')) {
-                userMessage.focus();
+                if (userMessage) userMessage.focus();
                 // Add welcome message if first time opening
                 if (chatHistory.length === 0) {
                     addWelcomeMessage();
                 }
             }
         });
+        console.log('Chat toggle event listener added');
+    } else {
+        console.error('Chat toggle or chatbot element not found!');
     }
 
     // Close chatbot

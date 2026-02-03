@@ -503,12 +503,20 @@ nav {
     overflow: hidden;
     transform: translateY(100%);
     opacity: 0;
+    visibility: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chatbot-container:not(.hidden) {
     transform: translateY(0);
     opacity: 1;
+    visibility: visible;
+}
+
+.chatbot-container.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
 }
 
 .chat-header {
@@ -3803,4 +3811,9 @@ input:checked + .toggle-slider:before {
 /* Utility Classes */
 .hidden {
     display: none;
+}
+
+/* Exception for chatbot - use visibility instead of display for smooth animations */
+.chatbot-container.hidden {
+    display: flex !important;
 }
