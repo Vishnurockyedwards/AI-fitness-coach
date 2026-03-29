@@ -89,12 +89,54 @@
 
 ---
 
+## 🧠 RAG (Retrieval Augmented Generation) Q&A (Local)
+
+This repo now includes an **in-house RAG pipeline** that:
+- Loads docs from `knowledge_base/` (`.txt` and `.pdf`)
+- Chunks them (~500 chars, ~50 overlap)
+- Embeds using SentenceTransformers (`all-MiniLM-L6-v2`)
+- Stores/loads a local FAISS index in `rag_index/`
+- Retrieves top-3 chunks per question
+- Sends the retrieved context + question to Gemini
+
+### Run the RAG app (Streamlit)
+
+1. **Install Python dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Set your Gemini key**
+   - Option A (root): create `.env` with:
+     ```env
+     GEMINI_API_KEY=your_gemini_api_key_here
+     ```
+   - Option B: you can also put it in `gemini/.env` (the RAG pipeline will read it too).
+
+3. **Start the app**
+   ```bash
+   streamlit run app.py
+   ```
+
+**Note:** On first run, the FAISS index is built once and saved to `rag_index/`. If you add/change files in `knowledge_base/`, delete `rag_index/` to force a rebuild.
+
+---
+
 ## 🏗️ Project Structure
 
 ```
 ai-powered-fitness-coach/
+├── 📁 knowledge_base/          # Local fitness knowledge docs (txt/pdf)
 ├── 📁 gemini/                 # AI chatbot backend
 │   └── gemini_chatbot.py      # Gemini AI integration
+├── 📁 rag/                    # RAG pipeline modules
+│   ├── document_loader.py
+│   ├── chunking.py
+│   ├── embedding.py
+│   ├── vector_store.py
+│   ├── retriever.py
+│   └── rag_pipeline.py
+├── 📁 rag_index/              # Local FAISS index (generated)
 ├── 📁 static/                 # Static assets
 ├── 📁 templates/              # HTML templates
 ├── 📁 exercise/               # Exercise data and archives
@@ -104,6 +146,8 @@ ai-powered-fitness-coach/
 ├── 🎨 style.css               # Application styling
 ├── ⚡ script.js               # Core JavaScript functionality
 ├── 📊 calories.csv            # Nutrition database
+├── 🐍 app.py                  # Streamlit RAG Q&A app
+├── 📄 requirements.txt         # Python dependencies for RAG
 └── 📦 package.json            # Node.js dependencies
 ```
 
