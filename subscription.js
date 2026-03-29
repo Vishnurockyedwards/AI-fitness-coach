@@ -12,7 +12,7 @@
 //       demos and prototypes). Wire up a Node/Python backend when going live.
 // ─────────────────────────────────────────────────────────────────────────
 
-const RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // ← replace this
+const RAZORPAY_KEY_ID = 'rzp_live_SX5vH5QPQkUYWq'; // ← replace this
 
 // Pricing
 const PLANS = {
