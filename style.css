@@ -1,12 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Gill Sans MT', 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Poppins', 'Gill Sans MT', sans-serif;
 }
 
 :root {
     --primary: #ff5722;
+    --primary-dark: #e64a19;
+    --primary-light: #ff8a50;
     --secondary: #2c3e50;
     --light: #ecf0f1;
     --dark: #1a1a1a;
@@ -14,9 +18,12 @@
     --warning: #f39c12;
     --danger: #e74c3c;
     --gray: #95a5a6;
-    --card-bg: rgba(255, 255, 255, 0.9);
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.92);
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.18);
     --transition: all 0.3s ease;
+    --gradient: linear-gradient(135deg, var(--primary), var(--primary-light));
+    --radius: 14px;
 }
 
 body {
@@ -50,27 +57,107 @@ body {
 /* Navigation */
 nav {
     width: 100%;
-    height: 80px;
+    height: 72px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 5%;
-    background-color: rgba(0, 0, 0, 0.85);
+    background: rgba(10, 10, 15, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    transition: background 0.3s;
 }
 
 /* Removed PillNav integration overrides */
 
+/* Logo group — text + animated icon ticker */
+.logo-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
 .logo {
-    color: white;
-    font-size: 2.5rem;
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 40%, var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+}
+.logo .logo-accent {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Logo icon ticker ───────────────────────────────────────────────────── */
+/* 4 icons, each visible for 2.5 s → full cycle = 10 s                      */
+.logo-ticker {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+}
+
+.logo-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    color: var(--primary-light);
+    opacity: 0;
+    transform: translateY(6px) scale(0.9);
+    animation: iconCycle 10s ease-in-out infinite;
+    /* stagger each icon by 2.5 s */
+    animation-delay: calc(var(--i) * 2.5s);
+}
+
+.logo-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--primary-light);
+}
+
+.logo-icon span {
+    font-size: 0.48rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1;
+}
+
+/*
+ * Timeline per icon (total cycle = 10 s, slot = 2.5 s):
+ *   0%        — invisible, shifted down
+ *   5%        — fade + slide in
+ *   20%       — fully visible (hold)
+ *   25%       — fade + slide out
+ *   100%      — invisible (waiting for next cycle)
+ */
+@keyframes iconCycle {
+    0%   { opacity: 0; transform: translateY(6px)  scale(0.88); }
+    5%   { opacity: 1; transform: translateY(0)     scale(1);    }
+    20%  { opacity: 1; transform: translateY(0)     scale(1);    }
+    25%  { opacity: 0; transform: translateY(-6px)  scale(0.88); }
+    100% { opacity: 0; transform: translateY(6px)   scale(0.88); }
 }
 
 .right-nav {
@@ -134,18 +221,37 @@ nav {
     justify-content: center;
     text-align: center;
     padding: 0 5%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(
+        160deg,
+        rgba(0, 0, 0, 0.78) 0%,
+        rgba(26, 10, 5, 0.7) 50%,
+        rgba(0, 0, 0, 0.82) 100%
+    );
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(255, 87, 34, 0.18) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .hero-content {
-    max-width: 800px;
+    max-width: 820px;
+    position: relative;
+    z-index: 1;
 }
 
 .hero h1 {
-    font-size: 3.5rem;
+    font-size: 3.8rem;
+    font-weight: 800;
     color: white;
     margin-bottom: 20px;
-    line-height: 1.2;
+    line-height: 1.15;
+    letter-spacing: -1px;
 }
 
 /* Typewriter */
@@ -167,27 +273,108 @@ nav {
 }
 
 .hero p {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 40px;
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.82);
+    margin-bottom: 36px;
+    letter-spacing: 0.2px;
 }
 
 .cta-btn {
-    background-color: var(--primary);
+    background: var(--gradient);
     color: white;
     border: none;
-    padding: 15px 40px;
-    font-size: 1.2rem;
+    padding: 16px 44px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
     border-radius: 50px;
     cursor: pointer;
-    transition: var(--transition);
-    font-weight: bold;
+    transition: transform 0.25s, box-shadow 0.25s;
+    box-shadow: 0 4px 20px rgba(255, 87, 34, 0.45);
+    animation: ctaGlow 3s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0);
+    transition: background 0.25s;
 }
 
 .cta-btn:hover {
-    background-color: #e64a19;
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 36px rgba(255, 87, 34, 0.55);
+}
+
+.cta-btn:hover::before {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+@keyframes ctaGlow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(255, 87, 34, 0.45); }
+    50%       { box-shadow: 0 4px 36px rgba(255, 87, 34, 0.7); }
+}
+
+/* Hero stats badges */
+.hero-badges {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+}
+
+.hero-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(10px);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.hero-badge span {
+    color: var(--primary-light);
+    font-weight: 700;
+}
+
+/* Hero scroll hint */
+.hero-scroll {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.72rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    animation: scrollBounce 2s ease-in-out infinite;
+}
+
+.hero-scroll::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+}
+
+@keyframes scrollBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(6px); }
 }
 
 /* Content Wrapper */
@@ -199,10 +386,13 @@ nav {
 .user-form-section {
     max-width: 800px;
     margin: 0 auto 60px;
-    background-color: var(--card-bg);
-    padding: 40px;
-    border-radius: 10px;
+    background: var(--card-bg);
+    padding: 44px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-top: 4px solid var(--primary);
 }
 
 .user-form-section h2 {
@@ -216,13 +406,6 @@ nav {
     margin-bottom: 20px;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: var(--secondary);
-}
-
 .help-text {
     display: block;
     font-size: 0.8rem;
@@ -232,17 +415,30 @@ nav {
 
 .form-control {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: var(--transition);
+    padding: 12px 16px;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+    color: var(--dark);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 .form-control:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.2);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.15);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--secondary);
+    letter-spacing: 0.2px;
 }
 
 .checkbox-group {
@@ -263,32 +459,38 @@ nav {
 }
 
 .submit-btn {
-    background-color: var(--primary);
+    background: var(--gradient);
     color: white;
     border: none;
-    padding: 14px 30px;
-    font-size: 1.1rem;
-    border-radius: 8px;
+    padding: 15px 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.4px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: var(--transition);
+    transition: transform 0.22s, box-shadow 0.22s;
     display: block;
     width: 100%;
     margin-top: 30px;
-    font-weight: bold;
+    box-shadow: 0 4px 16px rgba(255, 87, 34, 0.35);
 }
 
 .submit-btn:hover {
-    background-color: #e64a19;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 87, 34, 0.5);
 }
 
 /* Workout Plan Section */
 .workout-plan-section {
     max-width: 1000px;
     margin: 0 auto 60px;
-    background-color: var(--card-bg);
-    padding: 40px;
-    border-radius: 10px;
+    background: var(--card-bg);
+    padding: 44px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.6);
 }
 
 .workout-plan-section h2 {
@@ -317,18 +519,26 @@ nav {
 }
 
 .schedule-day {
-    background-color: white;
-    border-radius: 8px;
+    background: white;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: var(--shadow);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.22s, box-shadow 0.22s;
+}
+
+.schedule-day:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
 
 .day-header {
-    background-color: var(--secondary);
+    background: var(--gradient);
     color: white;
     padding: 10px;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 0.88rem;
     text-align: center;
+    letter-spacing: 0.5px;
 }
 
 .day-content {
@@ -415,74 +625,132 @@ nav {
 .exercise-showcase {
     max-width: 1200px;
     margin: 0 auto;
-    background-color: var(--card-bg);
-    padding: 40px;
-    border-radius: 10px;
+    background: var(--card-bg);
+    padding: 44px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.6);
 }
 
-.exercise-showcase h2 {
+.exercise-showcase h2,
+.user-form-section h2,
+.workout-plan-section h2 {
     color: var(--secondary);
     margin-bottom: 30px;
     text-align: center;
     font-size: 2rem;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.exercise-showcase h2::after,
+.user-form-section h2::after,
+.workout-plan-section h2::after {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 4px;
+    background: var(--gradient);
+    border-radius: 2px;
+    margin: 8px auto 0;
 }
 
 .category-filters {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 30px;
+    gap: 8px;
+    margin-bottom: 32px;
 }
 
 .filter-btn {
-    background-color: transparent;
-    border: 2px solid var(--secondary);
+    background: transparent;
+    border: 1.5px solid rgba(44, 62, 80, 0.35);
     color: var(--secondary);
-    padding: 8px 20px;
+    padding: 7px 20px;
     border-radius: 50px;
     cursor: pointer;
-    transition: var(--transition);
-    font-weight: bold;
+    transition: all 0.22s ease;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.3px;
 }
 
-.filter-btn:hover, .filter-btn.active {
-    background-color: var(--secondary);
+.filter-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(255, 87, 34, 0.06);
+}
+
+.filter-btn.active {
+    background: var(--gradient);
+    border-color: transparent;
     color: white;
+    box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
 }
 
 .exercises-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 25px;
+    gap: 24px;
 }
 
 .exercise-card {
-    background-color: white;
-    border-radius: 8px;
+    background: white;
+    border-radius: var(--radius);
     overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+    position: relative;
+}
+
+/* Category badge from data-category attribute */
+.exercise-card::before {
+    content: attr(data-category);
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    z-index: 2;
+    pointer-events: none;
 }
 
 .exercise-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-7px);
+    box-shadow: var(--shadow-hover);
 }
 
 .exercise-card img {
     width: 100%;
-    height: 180px;
+    height: 185px;
     object-fit: cover;
-    border-bottom: 1px solid #eee;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.exercise-card:hover img {
+    transform: scale(1.04);
 }
 
 .exercise-card h4 {
-    padding: 15px;
-    font-size: 1.1rem;
+    padding: 14px 14px 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
     color: var(--secondary);
     text-align: center;
+    line-height: 1.35;
 }
 
 /* Chatbot */
@@ -1641,33 +1909,64 @@ input:checked + .toggle-slider:before {
 }
 
 .nav-link {
-    color: white;
+    color: rgba(255, 255, 255, 0.75);
     text-decoration: none;
-    padding: 10px 18px;
-    margin: 0 5px;
-    border-radius: 5px;
-    transition: var(--transition);
+    padding: 8px 14px;
+    margin: 0 2px;
+    border-radius: 8px;
+    transition: color 0.25s, background 0.25s;
     font-weight: 500;
-    letter-spacing: 0.5px;
+    font-size: 0.88rem;
+    letter-spacing: 0.3px;
     position: relative;
 }
 
-.nav-link:hover, .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.2);
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+    background: var(--gradient);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+}
+
+.nav-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .nav-link.active {
-    color: var(--primary);
+    color: var(--primary-light);
+    background: rgba(255, 87, 34, 0.12);
 }
 
 .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: 1px;
-    left: 6px;
-    right: 5px;
-    height: 2px;
-    background-color: var(--primary);
+    transform: scaleX(1);
+}
+
+/* Pro upgrade pill in nav */
+.nav-link-pro {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
+    color: #fff !important;
+    border-radius: 50px !important;
+    padding: 6px 16px !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+    box-shadow: 0 2px 12px rgba(255,87,34,0.4);
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.nav-link-pro::after { display: none !important; }
+
+.nav-link-pro:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(255,87,34,0.55) !important;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
+    color: #fff !important;
 }
 
 /* Mobile menu toggle */
@@ -3041,6 +3340,11 @@ input:checked + .toggle-slider:before {
     }
 }
 
+/* Hide icon ticker on small screens to keep nav clean */
+@media (max-width: 600px) {
+    .logo-ticker { display: none; }
+}
+
 /* Original Tablet Styles (max-width: 992px) */
 @media (max-width: 992px) {
     .nutrition-summary,
@@ -3864,6 +4168,351 @@ input:checked + .toggle-slider:before {
         page-break-inside: avoid;
     }
 }
+/* ── Section entrance animations ───────────────────────────────────────── */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.main-section,
+.user-form-section,
+.workout-plan-section,
+.exercise-showcase {
+    animation: fadeUp 0.55s ease both;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 87, 34, 0.35);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 87, 34, 0.6); }
+
+/* ── Selection color ────────────────────────────────────────────────────── */
+::selection {
+    background: rgba(255, 87, 34, 0.25);
+    color: var(--dark);
+}
+
+/* ── Workout plan action buttons ────────────────────────────────────────── */
+.workout-plan-section .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.workout-plan-section .action-btn {
+    background: var(--secondary);
+    color: white;
+    border: none;
+    padding: 11px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.22s, transform 0.22s, box-shadow 0.22s;
+}
+
+.workout-plan-section .action-btn:hover {
+    background: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 87, 34, 0.3);
+}
+
+/* ── Pose Detection ─────────────────────────────────────────────────────── */
+
+/* "Detect Pose" button injected into every exercise card */
+.pose-detect-btn {
+    display: block;
+    width: calc(100% - 20px);
+    margin: 8px 10px 10px;
+    padding: 8px 0;
+    background: var(--secondary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+.pose-detect-btn:hover {
+    background: var(--primary);
+    transform: translateY(-1px);
+}
+
+/* Modal backdrop */
+.pose-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.pose-modal.pose-modal-open {
+    opacity: 1;
+}
+.pose-modal.hidden {
+    display: none;
+}
+
+/* Modal card */
+.pose-modal-content {
+    background: #1a1f2e;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 700px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+.pose-modal-open .pose-modal-content {
+    transform: translateY(0);
+}
+
+/* Modal header */
+.pose-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.pose-exercise-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.pose-ai-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #ff5722, #ff8a50);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    width: fit-content;
+}
+.pose-modal-header h3 {
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0;
+}
+.pose-close-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+.pose-close-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* Video wrapper — canvas is overlaid on top of video */
+.pose-video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #0d1117;
+    overflow: hidden;
+}
+#poseVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0; /* canvas takes over visually */
+}
+#poseCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* HUD overlay — top corners */
+.pose-hud {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Rep counter box */
+.rep-counter-box {
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 10px 18px;
+    text-align: center;
+    min-width: 80px;
+}
+.rep-counter-box span {
+    display: block;
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    transition: transform 0.15s;
+}
+.rep-counter-box label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--primary);
+    margin-top: 2px;
+}
+.rep-flash {
+    animation: repPop 0.4s ease;
+}
+@keyframes repPop {
+    0%   { transform: scale(1); color: #fff; }
+    40%  { transform: scale(1.4); color: #00f5d4; }
+    100% { transform: scale(1); color: #fff; }
+}
+
+/* Form badge */
+.form-badge {
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: background 0.3s, color 0.3s;
+}
+.form-badge.good {
+    background: rgba(46, 204, 113, 0.85);
+    color: #fff;
+}
+.form-badge.warn {
+    background: rgba(231, 76, 60, 0.9);
+    color: #fff;
+}
+.form-badge.detecting {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #ccc;
+}
+
+/* Idle placeholder (shown before camera starts) */
+.pose-idle-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: #0d1117;
+    z-index: 5;
+    transition: opacity 0.4s;
+}
+.pose-idle-screen svg {
+    width: 70px;
+    height: 105px;
+    opacity: 0.6;
+    animation: idlePulse 2s ease-in-out infinite;
+}
+@keyframes idlePulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50%       { opacity: 0.8; transform: scale(1.05); }
+}
+.pose-idle-screen p {
+    color: #888;
+    font-size: 0.85rem;
+    text-align: center;
+    max-width: 240px;
+}
+.pose-video-wrapper.camera-active .pose-idle-screen {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Controls row */
+.pose-controls-row {
+    display: flex;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+.pose-start-btn,
+.pose-reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+.pose-start-btn {
+    background: var(--primary);
+    color: #fff;
+    flex: 1;
+    justify-content: center;
+}
+.pose-start-btn:hover  { background: #e64a19; }
+.pose-start-btn.active { background: #444; }
+.pose-start-btn.active:hover { background: #555; }
+.pose-reset-btn {
+    background: rgba(255,255,255,0.08);
+    color: #ccc;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+.pose-reset-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+/* Feedback bar */
+.pose-feedback-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px 16px;
+    color: #aaa;
+    font-size: 0.82rem;
+}
+.pose-feedback-bar svg { flex-shrink: 0; opacity: 0.7; }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .pose-modal-content { border-radius: 12px; }
+    .rep-counter-box span { font-size: 2rem; }
+    .pose-controls-row { flex-direction: column; }
+    .pose-reset-btn { width: 100%; justify-content: center; }
+}
+
 /* Utility Classes */
 .hidden {
     display: none;
