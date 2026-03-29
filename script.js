@@ -2214,41 +2214,41 @@ const workoutData = {
     // Sample exercise data by category
     exercises: {
         chest: [
-            { name: "Bench Press", gif: "chest1.gif", sets: "3-4", reps: "8-12", description: "Lie on a bench and push the barbell upward from your chest." },
-            { name: "Incline Dumbbell Press", gif: "chest2.gif", sets: "3", reps: "10-12", description: "Lie on an inclined bench and push dumbbells upward." },
-            { name: "Cable Fly", gif: "chest3.gif", sets: "3", reps: "12-15", description: "Using cable machine, bring your arms together in front of your chest." },
-            { name: "Push-Ups", gif: "chest4.gif", sets: "3", reps: "10-20", description: "Body-weight exercise pushing away from the ground." },
-            { name: "Chest Dips", gif: "chest5.gif", sets: "3", reps: "8-12", description: "Using parallel bars, lower your body and push back up." }
+            { name: "Bench Press", gif: "gifs/chest1.gif", sets: "3-4", reps: "8-12", description: "Lie on a bench and push the barbell upward from your chest." },
+            { name: "Incline Dumbbell Press", gif: "gifs/chest2.gif", sets: "3", reps: "10-12", description: "Lie on an inclined bench and push dumbbells upward." },
+            { name: "Cable Fly", gif: "gifs/chest3.gif", sets: "3", reps: "12-15", description: "Using cable machine, bring your arms together in front of your chest." },
+            { name: "Push-Ups", gif: "gifs/chest4.gif", sets: "3", reps: "10-20", description: "Body-weight exercise pushing away from the ground." },
+            { name: "Chest Dips", gif: "gifs/chest5.gif", sets: "3", reps: "8-12", description: "Using parallel bars, lower your body and push back up." }
         ],
         back: [
-            { name: "Lat Pulldown", gif: "back1.gif", sets: "3-4", reps: "10-12", description: "Pull the bar down to your chest using a wide grip." },
-            { name: "Bent Over Row", gif: "back2.gif", sets: "3", reps: "8-12", description: "Bend at waist and pull a barbell to your abdomen." },
-            { name: "Pull-Ups", gif: "back3.gif", sets: "3", reps: "6-12", description: "Pull your body up to a bar using your back muscles." },
-            { name: "T-Bar Row", gif: "back4.gif", sets: "3", reps: "8-12", description: "Using a t-bar machine, pull weight toward your chest." },
-            { name: "Cable Row", gif: "back5.gif", sets: "3", reps: "10-12", description: "Using a cable machine, pull the handle to your abdomen." }
+            { name: "Lat Pulldown", gif: "gifs/back1.gif", sets: "3-4", reps: "10-12", description: "Pull the bar down to your chest using a wide grip." },
+            { name: "Bent Over Row", gif: "gifs/back2.gif", sets: "3", reps: "8-12", description: "Bend at waist and pull a barbell to your abdomen." },
+            { name: "Pull-Ups", gif: "gifs/back3.gif", sets: "3", reps: "6-12", description: "Pull your body up to a bar using your back muscles." },
+            { name: "T-Bar Row", gif: "gifs/back4.gif", sets: "3", reps: "8-12", description: "Using a t-bar machine, pull weight toward your chest." },
+            { name: "Cable Row", gif: "gifs/back5.gif", sets: "3", reps: "10-12", description: "Using a cable machine, pull the handle to your abdomen." }
         ],
         shoulder: [
-            { name: "Overhead Press", gif: "shoulder1.gif", sets: "3-4", reps: "8-10", description: "Push weight overhead from shoulder height." },
-            { name: "Lateral Raise", gif: "shoulder2.gif", sets: "3", reps: "12-15", description: "Raise dumbbells to the sides to shoulder height." },
-            { name: "Front Raise", gif: "shoulder3.gif", sets: "3", reps: "12-15", description: "Raise weights in front of you to shoulder height." },
-            { name: "Face Pull", gif: "shoulder4.gif", sets: "3", reps: "12-15", description: "Pull rope attachment to your face using cables." },
-            { name: "Reverse Fly", gif: "shoulder5.gif", sets: "3", reps: "12-15", description: "Raise weights to sides while bent over." }
+            { name: "Overhead Press", gif: "gifs/shoulder1.gif", sets: "3-4", reps: "8-10", description: "Push weight overhead from shoulder height." },
+            { name: "Lateral Raise", gif: "gifs/shoulder2.gif", sets: "3", reps: "12-15", description: "Raise dumbbells to the sides to shoulder height." },
+            { name: "Front Raise", gif: "gifs/shoulder3.gif", sets: "3", reps: "12-15", description: "Raise weights in front of you to shoulder height." },
+            { name: "Face Pull", gif: "gifs/shoulder4.gif", sets: "3", reps: "12-15", description: "Pull rope attachment to your face using cables." },
+            { name: "Reverse Fly", gif: "gifs/shoulder5.gif", sets: "3", reps: "12-15", description: "Raise weights to sides while bent over." }
         ],
         biceps: [
-            { name: "Barbell Curl", gif: "biceps1.gif", sets: "3", reps: "10-12", description: "Curl a barbell up toward your shoulders." },
-            { name: "Hammer Curl", gif: "biceps2.gif", sets: "3", reps: "10-12", description: "Curl dumbbells with palms facing each other." },
-            { name: "Preacher Curl", gif: "biceps3.gif", sets: "3", reps: "10-12", description: "Curl barbell using a preacher bench for support." }
+            { name: "Barbell Curl", gif: "gifs/biceps1.gif", sets: "3", reps: "10-12", description: "Curl a barbell up toward your shoulders." },
+            { name: "Hammer Curl", gif: "gifs/biceps2.gif", sets: "3", reps: "10-12", description: "Curl dumbbells with palms facing each other." },
+            { name: "Preacher Curl", gif: "gifs/biceps3.gif", sets: "3", reps: "10-12", description: "Curl barbell using a preacher bench for support." }
         ],
         triceps: [
-            { name: "Triceps Pushdown", gif: "triceps1.gif", sets: "3", reps: "12-15", description: "Push cable attachment down using triceps." },
-            { name: "Overhead Extension", gif: "triceps2.gif", sets: "3", reps: "10-12", description: "Extend weight overhead using triceps." }
+            { name: "Triceps Pushdown", gif: "gifs/triceps1.gif", sets: "3", reps: "12-15", description: "Push cable attachment down using triceps." },
+            { name: "Overhead Extension", gif: "gifs/triceps2.gif", sets: "3", reps: "10-12", description: "Extend weight overhead using triceps." }
         ],
         leg: [
-            { name: "Squats", gif: "leg.gif", sets: "4", reps: "8-12", description: "Bend knees and hips to lower your body down and up." },
-            { name: "Leg Press", gif: "leg2.gif", sets: "3-4", reps: "10-12", description: "Push weight away using leg press machine." },
-            { name: "Lunges", gif: "leg3.gif", sets: "3", reps: "10-12 each leg", description: "Step forward into a lunge position and return." },
-            { name: "Leg Extensions", gif: "leg4.gif", sets: "3", reps: "12-15", description: "Extend legs using leg extension machine." },
-            { name: "Deadlift", gif: "leg5.gif", sets: "3-4", reps: "8-10", description: "Lift barbell from floor using legs and back." }
+            { name: "Squats", gif: "gifs/leg.gif", sets: "4", reps: "8-12", description: "Bend knees and hips to lower your body down and up." },
+            { name: "Leg Press", gif: "gifs/leg2.gif", sets: "3-4", reps: "10-12", description: "Push weight away using leg press machine." },
+            { name: "Lunges", gif: "gifs/leg3.gif", sets: "3", reps: "10-12 each leg", description: "Step forward into a lunge position and return." },
+            { name: "Leg Extensions", gif: "gifs/leg4.gif", sets: "3", reps: "12-15", description: "Extend legs using leg extension machine." },
+            { name: "Deadlift", gif: "gifs/leg5.gif", sets: "3-4", reps: "8-10", description: "Lift barbell from floor using legs and back." }
         ]
     },
 
